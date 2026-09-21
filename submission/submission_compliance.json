@@ -1,0 +1,32 @@
+{
+  "broad_spectrum": {
+    "lib_ok": true,
+    "top_ok": true,
+    "secret_hits": 0,
+    "worst_lev": 0.7692
+  },
+  "gram_neg": {
+    "lib_ok": true,
+    "top_ok": true,
+    "secret_hits": 0,
+    "worst_lev": 0.7273
+  },
+  "gram_pos": {
+    "lib_ok": true,
+    "top_ok": true,
+    "secret_hits": 0,
+    "worst_lev": 0.7222
+  },
+  "mdr": {
+    "lib_ok": true,
+    "top_ok": true,
+    "secret_hits": 0,
+    "worst_lev": 0.7692
+  },
+  "therapeutic": {
+    "lib_ok": true,
+    "top_ok": true,
+    "secret_hits": 0,
+    "worst_lev": 0.7222
+  }
+}

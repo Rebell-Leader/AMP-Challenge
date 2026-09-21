@@ -1,0 +1,118 @@
+METHOD SUMMARY — Training data, external databases, and computational filters
+
+1. OVERVIEW AND DESIGN PHILOSOPHY
+Our approach is filter-first rather than generator-heavy. We deliberately use a
+simple, fully interpretable generator that samples strictly on the manifold of
+real antimicrobial peptides (AMPs), and invest the effort in an independently
+validated ranking stack. This choice is motivated by the competition design:
+Phase-1 scoring rewards not only diversity/novelty but also surrogate-predicted
+activity and distributional similarity to real AMPs, and Phase-2 draws 25
+peptides uniformly at random from the top-100 — so every candidate in the top-100
+must be strong, not just the best few. A tight, uniformly high-quality list beats
+a diverse-but-uneven one.
+
+2. TRAINING DATA AND EXTERNAL DATABASES
+Generator training corpus (~40,000 unique peptides):
+- MarLys-AMP antibacterial set (the reference set shipped with the competition
+  starter kit, data/antibacterial.fasta): 39,448 unique sequences, all filtered
+  to the 8–50 aa canonical-amino-acid window.
+- DBAASP-derived peptides with measured activity, accessed via the QMAP benchmark
+  package (qmap-benchmark), restricted to those with at least one panel-relevant
+  strain MIC <= 16 uM (the competition potency threshold).
+The union (~40,047 sequences) is the corpus the generator learns from.
+
+Surrogate-model training data:
+- QMAP benchmark (DBAASP-sourced), which provides per-strain MIC labels and HC50
+  consensus values with a homology-aware train/test split (sequences clustered at
+  0.6 identity so near-duplicates never straddle the split). After filtering to
+  8–50 aa canonical sequences we used 9,497 labeled peptides (by record), with
+  per-strain label counts ranging from ~6,000 (E. coli) to ~300 (E. cloacae).
+  MIC units were verified to be micromolar (uM) directly from the QMAP source
+  (DBAASPDataset.with_efficiency_below docstring: "threshold (in uM)").
+
+All databases used are open/permissively licensed: MarLys-AMP (CC-0), DBAASP via
+QMAP. No proprietary data was used.
+
+3. GENERATOR
+An order-3 residue Markov model over the 20 canonical amino acids, trained on the
+~40,000-peptide corpus (7,991 order-3 contexts). Sequence length is drawn from the
+empirical corpus length distribution and an end-token is honored only at/after the
+sampled target length, so generated lengths match the natural AMP distribution
+(median 18 aa; the raw library has median length 18, mean 18.8, mean net charge
++2.9 — matching MarLys at 18/18.7/+2.8). The generator is pure Python/NumPy, seeded
+(seed 2027), and produces a byte-for-byte reproducible 50,000-sequence library.
+No fine-tuning of any large model is used for generation; the competition
+explicitly states fine-tuning is not required and single-CPU methods are eligible.
+
+4. SURROGATE SCORING STACK (used for top-100 selection)
+- Sequence embeddings: ESM-2 (esm2_t33_650M_UR50D), mean-pooled over residues.
+- Per-strain MIC regressors: gradient-boosted trees (XGBoost) on log10(MIC),
+  trained per panel species on the ESM-2 embedding plus 26 physicochemical
+  features (composition, net charge, hydrophobicity, cationic fraction).
+- Calibration: every strain head was evaluated on the QMAP homology-aware test
+  split. Only the four heads with Pearson correlation >= 0.5 were retained:
+  E. coli (0.54), S. aureus (0.53), K. pneumoniae (0.52), S. enterica (0.64).
+  The low-data strains (P. aeruginosa, A. baumannii, enterococci, E. cloacae,
+  B. subtilis) did not reach 0.5 and were NOT used to make activity claims.
+- Safety: an HC50 regressor (PCC 0.51) used as a soft/directional filter.
+- Potency classifier: active if predicted MIC <= 16 uM on any panel strain
+  (AUROC 0.74).
+
+5. TOP-100 SELECTION (the "manual intervention"/filter step)
+From the 50,000-sequence library we pre-filtered on a fast physicochemical
+heuristic (charge, hydrophobic fraction, cationic fraction) to ~5,000 candidates,
+scored those with the full ESM-2 + surrogate stack, and selected the top-100 by:
+- Predicted potency and predicted-active coverage across the four reliable strains
+  (both Gram-negative and Gram-positive).
+- Safety (HC50) and internal diversity (a cluster cap so the random Phase-2 draw
+  never lands on redundant near-duplicates).
+- Hard novelty/compliance gates (Section 6).
+The submitted top-100 (broad-spectrum) has 100% predicted-active coverage across
+all four reliable strains, median predicted potency 0.98, and median HC50 ~99 uM.
+
+6. COMPLIANCE AND NOVELTY FILTERS (hard gates, all enforced)
+- Alphabet: 20 canonical amino acids only.
+- Length: 8–50 aa.
+- Uniqueness: all 50,000 library sequences unique; all 100 top sequences unique.
+- Library novelty: no sequence exactly matching any MarLys-AMP entry.
+- Top-100 novelty: every top-100 sequence has <80% identity to any MarLys entry.
+  We enforce this with Levenshtein ratio < 0.79 (the shipped verifier uses
+  Levenshtein.ratio > 0.8 as the binding gate). Worst-case top-100 identity is 0.77.
+- Subset property: every top-100 sequence is a member of the 50,000-library.
+- We additionally screened out any sequence whose substring matches common
+  secret-key regexes (e.g. AWS-key-like patterns), because such substrings can be
+  corrupted in transit by automated secret scanners; this affected a small number
+  of sequences that were regenerated.
+All of the above were re-verified end-to-end with the organizers' own
+verify_submission.py functions on the final submitted files.
+
+7. INDEPENDENT VALIDATION (not used in selection)
+To guard against selecting peptides that merely satisfy our own surrogate
+(circularity), we scored the top-100 with three activity predictors named in the
+competition documentation that had NO role in our selection pipeline:
+- AMPredictor (Dong et al., eLife 2025): ESM-1b + GNN + contact map. Validated at
+  PCC 0.50 vs QMAP E. coli ground truth.
+- MBC-Attention (Yan et al., mSystems 2023): iFeature + Multi-Branch CNN,
+  predicts E. coli MIC. Validated at PCC 0.71 — the strongest independent judge.
+- Pandi DeepAMP (Pandi et al., Nature Communications 2023): one-hot + Gram-split
+  CNN/LSTM.
+All three independently score the top-100 as substantially more potent than
+typical natural AMPs (92–100% of the list beats the median real AMP under each
+judge; the strongest judge, MBC-Attention, predicts median E. coli MIC ~2 uM,
+roughly an order of magnitude below the 16 uM potency threshold).
+
+We also tested whether a generative optimization pass could improve the list: a
+bounded DeepAMP (Li et al., Nature Communications 2024) seed-and-mutate pass using
+MBC-Attention as the acceptance gate produced apparent improvement under
+MBC-Attention, but the two other independent judges (AMPredictor, Pandi) showed
+the "optimized" variants were in fact worse — a clear overfitting-to-surrogate
+signal. We therefore REJECTED the optimization and kept the original top-100. This
+is the discipline a single-submission competition demands.
+
+8. COMPUTE AND REPRODUCIBILITY
+Everything runs on a single workstation (no GPU required for the core method) at
+zero cloud cost. The submission is packaged as a reproducible uv project with a
+fixed seed; re-running the generator reproduces the 50,000-library byte-for-byte
+(verified: identical SHA-256 across independent runs). Public model weights only
+(ESM-2, and the named surrogates for validation). Code, weights, and training-data
+provenance are open for co-authorship eligibility.
