@@ -97,7 +97,7 @@ competition documentation that had NO role in our selection pipeline:
 - Pandi DeepAMP (Pandi et al., Nature Communications 2023): one-hot + Gram-split
   CNN/LSTM.
 All three independently score the top-100 as substantially more potent than
-typical natural AMPs (92–100% of the list beats the median real AMP under each
+typical natural AMPs (83–100% of the list beats the median real AMP under each
 judge; the strongest judge, MBC-Attention, predicts median E. coli MIC ~2 uM,
 roughly an order of magnitude below the 16 uM potency threshold).
 

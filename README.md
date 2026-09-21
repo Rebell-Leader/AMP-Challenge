@@ -11,7 +11,7 @@ A fully reproducible package for the [AMP Challenge 2027](https://szczurek-lab.g
 | Library | 50,000 unique peptides, 8–50 aa, 20 canonical AA, 0 exact matches to MarLys-AMP |
 | Distribution realism | Fréchet Biological Distance **3.0** vs 94.2 for a naive baseline (31× closer) |
 | Top-100 potency | median predicted *E. coli* MIC **~1.8 µM** (strongest independent judge), ~10× below the 16 µM threshold |
-| Independent validation | 3 held-out judges (MBC-Attention PCC 0.71, AMPredictor 0.50, Pandi DeepAMP); 92–100 % of the list beats the real-AMP median |
+| Independent validation | 3 held-out judges (MBC-Attention PCC 0.71, AMPredictor 0.50, Pandi DeepAMP); 83–100 % of the list beats the real-AMP median |
 | Novelty | 0 exact matches vs MarLys / DBAASP / UniProt; worst identity 0.77 (< 0.80 threshold) |
 | Reproducibility | library regenerates **byte-for-byte** from a fixed seed; passes the organizers' `verify_submission.py` |
 

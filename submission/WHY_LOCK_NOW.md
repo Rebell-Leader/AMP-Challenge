@@ -12,7 +12,7 @@ PCC 0.50 vs ground truth), MBC-Attention (iFeature+CNN, PCC 0.71), and Pandi
 DeepAMP (one-hot CNN/LSTM).
 
 - All four agree the list is **substantially more potent than typical natural
-  AMPs**: 92–100% of the top-100 beats the median real AMP under each judge.
+  AMPs**: 83–100% of the top-100 beats the median real AMP under each judge.
 - The **best-validated** independent judge (MBC-Attention, PCC 0.71) predicts a
   **median E. coli MIC of ~2 µM** — roughly an order of magnitude below the
   competition's 16 µM potency threshold.

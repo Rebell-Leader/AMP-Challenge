@@ -113,7 +113,7 @@ To guard against selecting peptides that merely satisfy our own surrogate (circu
 | AMPredictor | ESM-1b + GNN + contact map | 0.497 |
 | Pandi DeepAMP (gr_neg CNN) | one-hot CNN | 0.371 |
 
-MBC-Attention is a *stronger* judge than our own head, and it is methodologically independent. All judges agree the top-100 is substantially more potent than typical natural AMPs (MarLys reference median): 92–100 % of the list beats the real-AMP median under each judge. The strongest judge places the median *E. coli* MIC at **~1.8 µM** for the broad-spectrum list — roughly an order of magnitude below the 16 µM potency threshold.
+MBC-Attention is a *stronger* judge than our own head, and it is methodologically independent. All judges agree the top-100 is substantially more potent than typical natural AMPs (MarLys reference median): 83–100 % of the list beats the real-AMP median under each judge (the 83 % floor is the therapeutic list under Pandi's Gram-positive head; the activity-focused lists sit at 91–100 %). The strongest judge places the median *E. coli* MIC at **~1.8 µM** for the broad-spectrum list — roughly an order of magnitude below the 16 µM potency threshold.
 
 ![Consolidated three-judge panel: reliability, %-below-threshold, judge×category heatmap](figures/panel_benchmark.png)
 

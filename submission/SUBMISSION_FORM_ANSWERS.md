@@ -70,7 +70,7 @@ weights, and training data)?**
 - [x] No secret-pattern-corrupted sequences
 - [x] Passes organizers' own verify_submission.py end-to-end
 - [x] Library reproducible byte-for-byte from fixed seed
-- [x] Independently validated by 3 held-out judges (92–100% beat real-AMP median)
+- [x] Independently validated by 3 held-out judges (83–100% beat real-AMP median)
 - [ ] Rename files + team-name field to your actual team name
 - [ ] Register on Kaggle with an institutional email
 - [ ] Submit by **October 1, 2026 AOE**
