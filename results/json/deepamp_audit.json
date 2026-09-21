@@ -1,0 +1,42 @@
+{
+  "broad_spectrum": {
+    "n_seeds": 100,
+    "n_improved": 71,
+    "median_seed_MIC": 1.8022661209106445,
+    "median_opt_MIC": 0.9902458190917969,
+    "mean_improvement_uM": 4.45204496383667,
+    "n_unique": 100
+  },
+  "gram_neg": {
+    "n_seeds": 100,
+    "n_improved": 72,
+    "median_seed_MIC": 1.656785011291504,
+    "median_opt_MIC": 0.6682904958724976,
+    "mean_improvement_uM": 2.5983314514160156,
+    "n_unique": 100
+  },
+  "gram_pos": {
+    "n_seeds": 100,
+    "n_improved": 77,
+    "median_seed_MIC": 2.0529842376708984,
+    "median_opt_MIC": 0.7446720600128174,
+    "mean_improvement_uM": 2.7315311431884766,
+    "n_unique": 100
+  },
+  "mdr": {
+    "n_seeds": 100,
+    "n_improved": 71,
+    "median_seed_MIC": 1.9954888820648193,
+    "median_opt_MIC": 0.8216708302497864,
+    "mean_improvement_uM": 2.667778730392456,
+    "n_unique": 100
+  },
+  "therapeutic": {
+    "n_seeds": 100,
+    "n_improved": 87,
+    "median_seed_MIC": 2.302259683609009,
+    "median_opt_MIC": 0.951012134552002,
+    "mean_improvement_uM": 5.090092658996582,
+    "n_unique": 100
+  }
+}

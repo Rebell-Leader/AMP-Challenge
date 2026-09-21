@@ -1,0 +1,52 @@
+{
+  "_ref": {
+    "mbc_marlys_median_uM": 24.88613510131836,
+    "pandi_cnn_gr_neg_marlys_median": 1.6641427278518677,
+    "pandi_cnn_gr_pos_marlys_median": 1.6490249633789062
+  },
+  "broad_spectrum": {
+    "mbc_ecoli_MIC_median_uM": 1.8022661805152893,
+    "mbc_frac_below_16uM": 0.95,
+    "mbc_frac_beat_marlys": 0.98,
+    "pandi_gr_neg_median": 0.6935843527317047,
+    "pandi_gr_neg_frac_beat_marlys": 0.94,
+    "pandi_gr_pos_median": 0.7426142394542694,
+    "pandi_gr_pos_frac_beat_marlys": 0.91
+  },
+  "gram_neg": {
+    "mbc_ecoli_MIC_median_uM": 1.6567849516868591,
+    "mbc_frac_below_16uM": 0.98,
+    "mbc_frac_beat_marlys": 1.0,
+    "pandi_gr_neg_median": 0.6672582924365997,
+    "pandi_gr_neg_frac_beat_marlys": 0.96,
+    "pandi_gr_pos_median": 0.6745737195014954,
+    "pandi_gr_pos_frac_beat_marlys": 0.95
+  },
+  "gram_pos": {
+    "mbc_ecoli_MIC_median_uM": 2.0529842376708984,
+    "mbc_frac_below_16uM": 1.0,
+    "mbc_frac_beat_marlys": 1.0,
+    "pandi_gr_neg_median": 0.6093195378780365,
+    "pandi_gr_neg_frac_beat_marlys": 0.99,
+    "pandi_gr_pos_median": 0.6738417446613312,
+    "pandi_gr_pos_frac_beat_marlys": 0.94
+  },
+  "mdr": {
+    "mbc_ecoli_MIC_median_uM": 1.9954888224601746,
+    "mbc_frac_below_16uM": 0.99,
+    "mbc_frac_beat_marlys": 1.0,
+    "pandi_gr_neg_median": 0.6643678247928619,
+    "pandi_gr_neg_frac_beat_marlys": 0.97,
+    "pandi_gr_pos_median": 0.6184943914413452,
+    "pandi_gr_pos_frac_beat_marlys": 0.95
+  },
+  "therapeutic": {
+    "mbc_ecoli_MIC_median_uM": 2.302259683609009,
+    "mbc_frac_below_16uM": 0.92,
+    "mbc_frac_beat_marlys": 0.95,
+    "pandi_gr_neg_median": 0.9462679922580719,
+    "pandi_gr_neg_frac_beat_marlys": 0.85,
+    "pandi_gr_pos_median": 0.7425715625286102,
+    "pandi_gr_pos_frac_beat_marlys": 0.83
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "Diversity": {
+    "Markov_AMP_library": 0.8550411758434484,
+    "toy_KP_baseline": 0.33203622
+  },
+  "Novelty": {
+    "Markov_AMP_library": 1.0,
+    "toy_KP_baseline": 1.0
+  },
+  "Uniqueness": {
+    "Markov_AMP_library": 1.0,
+    "toy_KP_baseline": 1.0
+  },
+  "Jaccard-similarity": {
+    "Markov_AMP_library": 0.04115499999999996,
+    "toy_KP_baseline": 0.009995000000000163
+  }
+}

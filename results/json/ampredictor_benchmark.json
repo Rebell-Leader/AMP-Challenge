@@ -1,0 +1,38 @@
+{
+  "broad_spectrum": {
+    "ampredictor_logmic_median": 0.43990594148635864,
+    "ampredictor_logmic_mean": 0.45590024450793865,
+    "ampredictor_logmic_p90": 0.7914291024208069,
+    "frac_below_marlys_median": 0.97,
+    "our_potency_median": 0.9776900708675385
+  },
+  "gram_neg": {
+    "ampredictor_logmic_median": 0.31586891412734985,
+    "ampredictor_logmic_mean": 0.3456068452820182,
+    "ampredictor_logmic_p90": 0.6326970100402833,
+    "frac_below_marlys_median": 0.99,
+    "our_potency_median": 0.9807912111282349
+  },
+  "gram_pos": {
+    "ampredictor_logmic_median": 0.39651064574718475,
+    "ampredictor_logmic_mean": 0.4044976868480444,
+    "ampredictor_logmic_p90": 0.6836418986320498,
+    "frac_below_marlys_median": 0.99,
+    "our_potency_median": 0.9785663485527039
+  },
+  "mdr": {
+    "ampredictor_logmic_median": 0.36286093294620514,
+    "ampredictor_logmic_mean": 0.3635660437680781,
+    "ampredictor_logmic_p90": 0.664663356542588,
+    "frac_below_marlys_median": 1.0,
+    "our_potency_median": 0.9830313920974731
+  },
+  "therapeutic": {
+    "ampredictor_logmic_median": 0.6162452697753906,
+    "ampredictor_logmic_mean": 0.6468442138656973,
+    "ampredictor_logmic_p90": 1.099696743488312,
+    "frac_below_marlys_median": 0.92,
+    "our_potency_median": 0.918269693851471
+  },
+  "_marlys_ref_median": 1.2114181518554688
+}

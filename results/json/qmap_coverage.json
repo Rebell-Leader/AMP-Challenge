@@ -1,0 +1,19 @@
+{
+  "mic_unit": "\u00b5M (verified from qmap DBAASPDataset.with_efficiency_below docstring: 'threshold (in \u00b5M)')",
+  "dataset": "canonical L-AA, 8-50 aa, union of QMAP 5 splits \u2014 matches training set / qmap_labeled.json",
+  "nseq_canonical": 9497,
+  "nseq_with_hc50": 9497,
+  "panel_mic_labels_canonical": {
+    "Escherichia coli": 6057,
+    "Staphylococcus aureus": 5312,
+    "Pseudomonas aeruginosa": 3689,
+    "Klebsiella pneumoniae": 1686,
+    "Acinetobacter baumannii": 1281,
+    "Enterococcus faecalis": 1106,
+    "Enterococcus faecium": 396,
+    "Salmonella enterica": 1042,
+    "Enterobacter cloacae": 308,
+    "Bacillus subtilis": 1608
+  },
+  "note_raw_unfiltered": "Before the 8-50aa/canonical filter the raw union is 10577 peptides; training and all reported PCCs use the 9497 canonical set."
+}

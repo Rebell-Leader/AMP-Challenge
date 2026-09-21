@@ -1,0 +1,23 @@
+{
+  "note": "UniProt parsed with proper multi-line record joining (full precursor proteins)",
+  "marlys": {
+    "n": 39448,
+    "exact": 0,
+    "max_id": 0.7692307692307692,
+    "med_id": 0.575187969924812
+  },
+  "dbaasp": {
+    "n": 8833,
+    "exact": 0,
+    "max_id": 0.6875,
+    "med_id": 0.568733153638814
+  },
+  "uniprot": {
+    "n_8_50_canonical": 1100,
+    "n_full_records": 3608,
+    "exact": 0,
+    "substring_in_full_proteins": 0,
+    "max_id": 0.5945945945945945,
+    "med_id": 0.4897959183673469
+  }
+}

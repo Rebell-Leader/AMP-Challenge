@@ -1,0 +1,22 @@
+{
+  "broad_spectrum": {
+    "ampred_seed": 0.43990594148635864,
+    "ampred_opt": 0.4621424674987793
+  },
+  "gram_neg": {
+    "ampred_seed": 0.31586891412734985,
+    "ampred_opt": 0.40649914741516113
+  },
+  "gram_pos": {
+    "ampred_seed": 0.3965105712413788,
+    "ampred_opt": 0.4616033434867859
+  },
+  "mdr": {
+    "ampred_seed": 0.36286091804504395,
+    "ampred_opt": 0.4127095341682434
+  },
+  "therapeutic": {
+    "ampred_seed": 0.6162450313568115,
+    "ampred_opt": 0.6460767984390259
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "n_cand": 5000,
+  "potency_med": 0.7431095838546753,
+  "frac_potent_gt0.5": 0.7168,
+  "top100_potency_med": 0.9737967252731323,
+  "top100_frac_active_med": 1.0,
+  "top100_hc50_med": 71.86982727050781,
+  "keep_strains": [
+    "Escherichia coli",
+    "Staphylococcus aureus",
+    "Klebsiella pneumoniae",
+    "Salmonella enterica"
+  ]
+}

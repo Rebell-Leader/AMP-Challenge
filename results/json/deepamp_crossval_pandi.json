@@ -1,0 +1,32 @@
+{
+  "broad_spectrum": {
+    "pandi_gn_seed": 0.6935843229293823,
+    "pandi_gn_opt": 0.7069631814956665,
+    "pandi_gp_seed": 0.7426142692565918,
+    "pandi_gp_opt": 0.7193433046340942
+  },
+  "gram_neg": {
+    "pandi_gn_seed": 0.6672582626342773,
+    "pandi_gn_opt": 0.6790062189102173,
+    "pandi_gp_seed": 0.6745737195014954,
+    "pandi_gp_opt": 0.6871659755706787
+  },
+  "gram_pos": {
+    "pandi_gn_seed": 0.6093195676803589,
+    "pandi_gn_opt": 0.6394498348236084,
+    "pandi_gp_seed": 0.6738417148590088,
+    "pandi_gp_opt": 0.7025717496871948
+  },
+  "mdr": {
+    "pandi_gn_seed": 0.6643677949905396,
+    "pandi_gn_opt": 0.7010882496833801,
+    "pandi_gp_seed": 0.6184943914413452,
+    "pandi_gp_opt": 0.6337082386016846
+  },
+  "therapeutic": {
+    "pandi_gn_seed": 0.9462679624557495,
+    "pandi_gn_opt": 0.900383710861206,
+    "pandi_gp_seed": 0.7425715923309326,
+    "pandi_gp_opt": 0.7612165808677673
+  }
+}

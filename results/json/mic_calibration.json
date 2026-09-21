@@ -1,0 +1,99 @@
+{
+  "Escherichia coli": {
+    "n_tr": 4631,
+    "n_te": 1351,
+    "pcc_esm": 0.5148890836847732,
+    "pcc": 0.5368839043698299,
+    "spearman": 0.49878058570694883,
+    "keep": true
+  },
+  "Staphylococcus aureus": {
+    "n_tr": 4096,
+    "n_te": 1136,
+    "pcc_esm": 0.5436566463733137,
+    "pcc": 0.5316239109263877,
+    "spearman": 0.5038152505032943,
+    "keep": true
+  },
+  "Pseudomonas aeruginosa": {
+    "n_tr": 2843,
+    "n_te": 790,
+    "pcc_esm": 0.40123083296048934,
+    "pcc": 0.4114285943050498,
+    "spearman": 0.40980745084497816,
+    "keep": false
+  },
+  "Klebsiella pneumoniae": {
+    "n_tr": 1287,
+    "n_te": 380,
+    "pcc_esm": 0.5115042211175838,
+    "pcc": 0.5185305601593805,
+    "spearman": 0.5197754111571605,
+    "keep": true
+  },
+  "Acinetobacter baumannii": {
+    "n_tr": 983,
+    "n_te": 275,
+    "pcc_esm": 0.4775665909567427,
+    "pcc": 0.4913902682143396,
+    "spearman": 0.4582579585223631,
+    "keep": false
+  },
+  "Enterococcus faecalis": {
+    "n_tr": 759,
+    "n_te": 322,
+    "pcc_esm": 0.1919450466813406,
+    "pcc": 0.20527455863739735,
+    "spearman": 0.19150038224094684,
+    "keep": false
+  },
+  "Enterococcus faecium": {
+    "n_tr": 309,
+    "n_te": 79,
+    "pcc_esm": 0.2588172380820911,
+    "pcc": 0.26688598978600925,
+    "spearman": 0.24531000567535197,
+    "keep": false
+  },
+  "Salmonella enterica": {
+    "n_tr": 814,
+    "n_te": 211,
+    "pcc_esm": 0.669143472689144,
+    "pcc": 0.6373195833268588,
+    "spearman": 0.5884227283463427,
+    "keep": true
+  },
+  "Enterobacter cloacae": {
+    "n_tr": 256,
+    "n_te": 49,
+    "pcc_esm": 0.32643316409910655,
+    "pcc": 0.34950340970446875,
+    "spearman": 0.3314959635848523,
+    "keep": false
+  },
+  "Bacillus subtilis": {
+    "n_tr": 1210,
+    "n_te": 370,
+    "pcc_esm": 0.40582467568223807,
+    "pcc": 0.3592651633020546,
+    "spearman": 0.34570855224396274,
+    "keep": false
+  },
+  "_hc50": {
+    "pcc": 0.5126877982183518,
+    "spearman": 0.5097381486036445,
+    "n_te": 277
+  },
+  "_potency_clf": {
+    "auroc": 0.7392180633124651,
+    "auprc": 0.8174844027245229,
+    "pos_rate": 0.6252573781743308,
+    "n_te": 1457
+  },
+  "_units": {
+    "mic": "\u00b5M",
+    "hc50": "\u00b5M",
+    "source": "qmap DBAASPDataset.with_efficiency_below docstring: 'threshold (in \u00b5M)'",
+    "potency_label": "active if MIC <= 16 \u00b5M (competition molar threshold)"
+  }
+}
