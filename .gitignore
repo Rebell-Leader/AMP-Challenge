@@ -1,0 +1,16 @@
+# large model weights (fetched by scripts in src/, never vendored)
+model_cache/
+**/*.pt
+**/*.safetensors
+**/weights/
+# embedding / scoring caches
+*.npy
+*.npz
+emb_cache*
+qmap_esm650_emb*
+# python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+# OS
+.DS_Store

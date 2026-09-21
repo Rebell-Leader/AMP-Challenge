@@ -1,0 +1,8 @@
+name: amp
+channels: [conda-forge, bioconda]
+dependencies:
+  - python=3.11
+  - pip
+  - mmseqs2            # optional: MMseqs2 identity cross-check
+  - pip:
+      - -r requirements.txt

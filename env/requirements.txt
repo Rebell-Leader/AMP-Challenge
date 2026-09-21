@@ -1,0 +1,19 @@
+# Core AMP-Challenge pipeline (Python 3.11). Pinned to the versions used to
+# produce the shipped artifacts. The generator itself needs only numpy;
+# the surrogate/benchmark stack needs the rest.
+numpy==2.4.6
+pandas==3.0.3
+scipy==1.17.1
+matplotlib==3.11.0
+scikit-learn==1.9.0
+xgboost==3.2.0
+python-Levenshtein==0.27.3
+biopython==1.87
+# embeddings + generative-model tooling
+fair-esm==2.0.0
+torch==2.12.1
+transformers==5.13.0
+huggingface-hub==1.22.0
+# evaluation
+seqme==0.5.0
+qmap-benchmark==0.1.1

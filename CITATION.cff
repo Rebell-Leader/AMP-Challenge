@@ -1,0 +1,8 @@
+cff-version: 1.2.0
+message: "If you use this work, please cite it as below."
+title: "Filter-First Generative Antimicrobial Peptide Design (AMP Challenge 2027)"
+authors:
+  - family-names: "(set team members)"
+version: "1.0.0"
+date-released: "2026-07-20"
+url: "https://github.com/Rebell-Leader/AMP-Challenge"
