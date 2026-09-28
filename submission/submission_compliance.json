@@ -1,32 +1,30 @@
 {
-  "broad_spectrum": {
-    "lib_ok": true,
-    "top_ok": true,
-    "secret_hits": 0,
-    "worst_lev": 0.7692
+  "library": {
+    "n": 50000,
+    "unique": true,
+    "len_range": [
+      8,
+      50
+    ],
+    "exact_matches_to_reference": 0
   },
-  "gram_neg": {
-    "lib_ok": true,
-    "top_ok": true,
-    "secret_hits": 0,
-    "worst_lev": 0.7273
+  "top100": {
+    "n": 100,
+    "subset_of_library": true,
+    "worst_levenshtein_identity_to_reference": 0.7429,
+    "gate": 0.8
   },
-  "gram_pos": {
-    "lib_ok": true,
-    "top_ok": true,
-    "secret_hits": 0,
-    "worst_lev": 0.7222
+  "therapeutic_top100": {
+    "n": 100,
+    "worst_levenshtein_identity_to_reference": 0.7879
   },
-  "mdr": {
-    "lib_ok": true,
-    "top_ok": true,
-    "secret_hits": 0,
-    "worst_lev": 0.7692
+  "organizer_verify_submission": {
+    "generate_broad_spectrum": "PASS",
+    "generate_gram_pos": "PASS",
+    "generate_gram_neg": "PASS",
+    "generate_mdr": "PASS",
+    "generate_therapeutic": "PASS"
   },
-  "therapeutic": {
-    "lib_ok": true,
-    "top_ok": true,
-    "secret_hits": 0,
-    "worst_lev": 0.7222
-  }
+  "byte_reproducible": true,
+  "library_sha256": "8a1535f8e509fcb6635ef9be789f842fee9356c0fa61bd495b4fb9f4d0842793"
 }

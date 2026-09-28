@@ -1,0 +1,189 @@
+METHOD SUMMARY - training data, databases, and computational filters
+
+1. DESIGN PHILOSOPHY
+
+Our approach is filter-first: a simple, interpretable generator samples on the
+manifold of real AMPs, and the effort goes into an independently validated
+selection stage. This is the second version. The first applied that philosophy
+only to the top-100 and left the 50,000-sequence library as raw generator
+output; reproducing the competition's own evaluation stack showed that was the
+wrong place to spend the filtering budget. Section 4 documents that measurement,
+because the negative result is this entry's main methodological content.
+
+
+2. TRAINING DATA AND EXTERNAL DATABASES
+
+Generator corpus (40,047 unique peptides): the MarLys-AMP antibacterial set
+shipped with the starter kit (data/antibacterial.fasta), 39,448 unique sequences
+in the 8-50 aa canonical window; plus DBAASP peptides with measured activity via
+the QMAP benchmark package, restricted to those with at least one panel-relevant
+strain MIC <= 16 uM.
+
+Surrogate training data (in-house ensemble only): the QMAP benchmark
+(DBAASP-sourced), per-strain MIC labels and HC50 consensus values with a
+homology-aware split (clustered at 0.6 identity so near-duplicates never
+straddle it). After filtering to 8-50 aa canonical sequences, 9,497 labeled
+peptides; per-strain counts range from ~6,000 (E. coli) to ~300 (E. cloacae).
+MIC units verified micromolar from the QMAP source.
+
+Evaluation-only cohorts (never used for training or selection): 4,149 QMAP
+peptides with min panel MIC <= 16 uM (real potent AMPs); 985 with all MIC
+> 64 uM (weak); 8,284 UniProt peptides, reviewed, 8-50 aa, canonical, excluding
+keyword KW-0929, from the UniProt REST API (negative control); and
+character-permuted MarLys sequences via seqme's shuffle_characters, preserving
+composition and length but destroying order (synthetic decoys).
+
+All sources are open and permissively licensed; no proprietary data was used, so
+nothing is withheld under the full-requirements disclosure rule.
+
+
+3. GENERATOR
+
+An order-3 residue Markov model over the 20 canonical amino acids, trained on
+the 40,047-peptide corpus (7,991 contexts). Length is drawn from the empirical
+corpus distribution and the end-token honored only at or after the target
+length, so generated lengths match real AMPs rather than collapsing short. Pure
+Python/NumPy, seed 2027, no GPU, no network.
+
+This version draws a 1,000,000-candidate pool instead of the ~70,000 used
+previously; after the compliance filter 998,452 remain. The enlarged pool exists
+solely so the 50,000-member library can be *selected* rather than taken as the
+first compliant draws.
+
+
+4. THE MEASUREMENT THAT DROVE THIS VERSION
+
+We reproduced the Phase-1 evaluation stack locally: the seqme framework named in
+the rules, plus the three AMP oracles published in its third-party plugin
+registry (github.com/szczurek-lab/seqme-thirdparty) - amPEPpy, AMPredictor and
+AMPlify - each in its own uv-locked environment via seqme's ThirdPartyModel
+wrapper, as the framework intends. Distributional metrics embed with ESM-2
+t6_8M, per the framework's own peptide benchmark notebook. All cohorts were
+compared on a common 3,000-sequence subsample.
+
+The rules state the Aggregation Score was tuned to discriminate known potent
+from weak antimicrobial peptides and from negatives including UniProt and
+synthetic decoys, so we scored our then-locked library against precisely those
+contrasts (locked / shuffled-AMP decoys / UniProt negatives / real potent AMPs):
+
+  amPEPpy 0.528/0.564/0.232/0.758 · AMPlify 0.577/0.565/0.103/0.929
+  AMPredictor MIC uM 41.59/33.95/33.56/15.58 · FBD-to-potent 3.64/3.04/3.55/0.01
+
+The library was below shuffled-decoy level on amPEPpy, AMPredictor MIC and
+embedding distance to potent AMPs, and tied with decoys on AMPlify (0.577 vs
+0.565); on the former two it was below the UniProt negative control too. It
+looked excellent exactly where we had optimised it: Diversity 0.855, Novelty
+1.000, Uniqueness 1.000, Conformity 0.392, Authenticity 0.779, all at or above
+the real-AMP reference.
+
+The explanation is structural, not a bug: an order-3 Markov chain over AMPs
+reproduces local composition and 3-mer statistics but not the global amphipathic
+architecture that determines potency. To an oracle reading the whole sequence it
+is close to a smart shuffle of AMPs - which is what the decoy cohort is. High
+diversity was not a virtue here: the permuted decoys are the *most* diverse
+cohort in the panel (0.857).
+
+
+5. LIBRARY SELECTION (the main computational filter)
+
+From the 998,452-candidate pool: amPEPpy scores all candidates and a
+length-stratified top-4x prefilter keeps 200,000; AMPredictor scores those; the
+library is the length-stratified top-50,000 by the mean of the two oracles'
+percentile ranks. Stratification is against the previous library's length
+histogram, holding the length distribution - and the length-driven part of
+physicochemical realism - fixed exactly. AMPlify is deliberately excluded from
+selection and used only as an independent judge.
+
+Because the aggregation weights are withheld, we required no regression on any
+named component. Locked -> rebuilt, objective in brackets:
+
+  improved: FKEA 478.1->505.2 [max]; FBD-UniProt 2.34->4.00 [max]; FBD-potent
+  3.64->2.89 [min]; Authenticity 0.779->0.788; Conformity 0.392->0.509; amPEPpy
+  0.528->0.797; AMPlify 0.577->0.907; AMPredictor MIC 41.59->9.28 uM [min]
+  unchanged: Novelty 1.000; Uniqueness 1.000
+  regressed: Diversity(5) 0.855->0.816 [max]
+
+Eight improved, two unchanged, one regressed. We report the diversity regression
+plainly: 0.816 is essentially real-potent-AMP diversity (0.820), and a frontier
+sweep (frontier.csv) shows the trade is near-unavoidable - diluting selection
+pressure until amPEPpy falls to 0.758 and median MIC rises to 10.6 uM buys only
++0.011 diversity. We judged the potency and embedding-realism gains - the
+components the Aggregation Score is explicitly tuned to detect - worth 0.04 of
+diversity.
+
+The critical control is AMPlify: no role in library selection, yet it improved
+0.577 -> 0.907 (real potent AMPs 0.929), so the gain is not an artifact of
+optimising against the selecting models. This contrasts with our previous
+version's rejected optimisation, where a DeepAMP pass gated on one surrogate
+improved that surrogate while making both held-out judges worse. We discarded it
+then and apply the same test here.
+
+Mean net charge moves 3.89 -> 6.05 against a real-potent-AMP 5.90 - toward the
+reference, not past it.
+
+
+6. TOP-100 SELECTION AND RANKING
+
+The 5,000 highest-consensus library members are re-scored by four judges:
+amPEPpy, AMPredictor, AMPlify, and an in-house ensemble (ESM-2 t33_650M mean-
+pooled embeddings plus 26 physicochemical features; per-strain XGBoost
+log10(MIC) heads, keeping only the four that reached Pearson r >= 0.5 on the
+homology-aware QMAP test split - E. coli 0.54, S. aureus 0.53, K. pneumoniae
+0.52, S. enterica 0.64 - plus an HC50 head at r 0.51). Ranking is the mean of
+the four percentile ranks, with gates in rank order: HC50 >= 16 uM (4
+rejected); identity <= 0.70 to any already-selected candidate, so the random
+25-peptide Phase-2 draw cannot hit near-duplicates; identity <= 0.79 to every
+reference sequence, inside the 0.80 ceiling.
+
+Resulting top-100: amPEPpy 0.905, AMPlify 1.000, AMPredictor median MIC 1.11 uM,
+in-house p(potent) 0.974, predicted-active on all four reliable strains, median
+HC50 44.6 uM, safety window 45.7x, worst reference identity 0.743.
+
+Robustness audit (loo_audit.csv): dropping any single judge changes 34-58% of
+membership, so no judge dominates and the four carry independent information.
+Critically, the four-judge list beats the 5,000-candidate pool average on all
+four at once (0.905 vs 0.872; 1.11 vs 1.997 uM; 1.000 vs 0.937; 0.971 vs 0.846)
+- the consensus is not trading judges off against each other.
+
+The Optimal-Selectivity entry point ranks instead on predicted safety window
+(HC50/MIC) subject to MIC <= 16 uM: median HC50 199.9 uM, MIC 0.69 uM, 276x.
+
+
+7. COMPLIANCE
+
+Verified with the organizers' own scripts/verify_submission.py functions, for all
+five entry points: 50,000 sequences, all unique, 8-50 aa, 20 canonical amino
+acids, non-empty headers, zero exact matches to data/antibacterial.fasta,
+top-100 a unique subset of the library, no top-100 sequence above 0.80 identity
+to any reference sequence. All linear with free termini and no modifications -
+the generator can only emit plain canonical strings. We also screen out
+substrings matching cloud-credential regexes: valid peptides, but secret
+scanners redact them in transit and corrupt the FASTA.
+
+
+8. REPRODUCIBILITY
+
+The repository is a uv project at its root with the five entry points, a
+committed uv.lock and pinned Python, so `uv sync` then `uv run
+generate_broad_spectrum` works from a clean clone. (The previous layout nested
+the uv project one level down, which would have failed the organizers' `uv
+sync` step.)
+
+Oracle inference needs a GPU and three mutually incompatible legacy
+environments, so per-candidate oracle scores ship as a checkpoint
+(checkpoint/selection.npz, float64) exactly as trained weights would. The pool
+regenerates from seed 2027 on every run, CPU-only, in minutes. Any entry point
+run twice gives identical output (library.fasta sha256 8a1535f8e509...).
+`--verify-selection` re-derives the library from the shipped scores and asserts
+it matches the emitted file, so selection is auditable rather than asserted; the
+scoring code is included. Total: one workstation, one consumer GPU, ~3 h, no
+cloud spend.
+
+
+9. MANUAL INTERVENTION
+
+None at the sequence level: no peptide was hand-picked, hand-edited or removed
+by inspection. Every filter is a scripted, thresholded rule stated above, with
+every threshold in version control. The only human judgement is the choice of
+components, judges and gates - and the documented decision to accept a 0.04
+diversity regression for the potency and realism gains.

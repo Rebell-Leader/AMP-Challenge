@@ -1,16 +1,9 @@
-# large model weights (fetched by scripts in src/, never vendored)
-model_cache/
-**/*.pt
-**/*.safetensors
-**/weights/
-# embedding / scoring caches
-*.npy
-*.npz
-emb_cache*
-qmap_esm650_emb*
-# python
+.venv/
 __pycache__/
 *.pyc
-.ipynb_checkpoints/
-# OS
-.DS_Store
+generate_broad_spectrum/
+generate_gram_pos/
+generate_gram_neg/
+generate_mdr/
+generate_therapeutic/
+checkpoint/selection_regenerated.npz

@@ -1,75 +1,96 @@
-# AMP Challenge 2027 — Filter-First Generative AMP Design
+# AMP Challenge 2027 — oracle-selected Markov AMP library
 
-A fully reproducible package for the [AMP Challenge 2027](https://szczurek-lab.github.io/amp-challenge-website/) (NeurIPS Competition Track): a 50,000-peptide antimicrobial library, a ranked top-100 candidate list, the code that produced them, calibrated surrogate models, an independent three-judge validation panel, and a paper draft.
+**Submission v2.** A simple, interpretable generator samples on the manifold of
+real antimicrobial peptides; the 50,000-member library is then *selected* on the
+published AMP oracles the competition's own evaluation framework ships.
 
-**Thesis:** *filter-first.* Sequence quality is set by the ranking stage, not by generator complexity. We generate broadly on the manifold of real AMPs with a simple, interpretable model, then invest the effort in a well-calibrated, independently-validated ranking and selection stage. The whole pipeline runs on one workstation at ~$0 compute.
+The reason this is v2 is worth stating up front: we reproduced the Phase-1
+scorer locally and found our own v1 library scoring **at the shuffled-AMP decoy
+floor** on predicted potency and embedding realism, while looking excellent on
+diversity and novelty — which were never the binding components. See
+[DECISION_RECORD.md](DECISION_RECORD.md).
 
-## Headline results
-
-| | |
-|---|---|
-| Library | 50,000 unique peptides, 8–50 aa, 20 canonical AA, 0 exact matches to MarLys-AMP |
-| Distribution realism | Fréchet Biological Distance **3.0** vs 94.2 for a naive baseline (31× closer) |
-| Top-100 potency | median predicted *E. coli* MIC **~1.8 µM** (strongest independent judge), ~10× below the 16 µM threshold |
-| Independent validation | 3 held-out judges (MBC-Attention PCC 0.71, AMPredictor 0.50, Pandi DeepAMP); 83–100 % of the list beats the real-AMP median |
-| Novelty | 0 exact matches vs MarLys / DBAASP / UniProt; worst identity 0.77 (< 0.80 threshold) |
-| Reproducibility | library regenerates **byte-for-byte** from a fixed seed; passes the organizers' `verify_submission.py` |
-
-See the [paper draft](paper/AMP_Challenge_paper.md) for the full method and figures.
-
-## Repository map
-
-```
-├── paper/                     # paper draft (Markdown) + figures/
-├── submission/                # the competition deliverables
-│   ├── ClaudeAMP_library_50k.fasta   # 50,000-sequence library
-│   ├── ClaudeAMP_top100.fasta        # ranked top-100 (broad-spectrum, submitted)
-│   ├── ABSTRACT_1500.txt / METHOD_SUMMARY_10k.txt / SUBMISSION_FORM_ANSWERS.md
-│   ├── WHY_LOCK_NOW.md               # the lock/resource-allocation rationale
-│   └── category_lists/               # 5 per-category top-100 lists (design exploration)
-├── src/
-│   ├── amp_challenge_2027_pkg/  # byte-reproducible generator package (uv/pyproject)
-│   ├── generate/                # generation + library scoring scripts
-│   ├── eval/                    # compliance + seqme evaluation harness
-│   ├── surrogate/               # ESM-2 + XGBoost ensemble (weight-fetch script)
-│   ├── benchmark/               # the 3 independent judges (AMPredictor, MBC, Pandi)
-│   └── optimize/                # the (rejected) DeepAMP optimization pass
-├── checkpoints/               # SMALL model files: markov_model.json, ensemble.pkl
-├── results/                   # all benchmark figures (*.png) + results/json/*.json
-├── docs/                      # analysis & planning notes
-├── env/                       # environment.yml + requirements.txt
-└── LICENSE · CITATION.cff · .gitignore
-```
-
-## Quickstart — regenerate the library
+## Quick start
 
 ```bash
-# 1. environment (Python 3.11)
-conda env create -f env/environment.yml   # or: pip install -r env/requirements.txt
-
-# 2. regenerate the 50,000-sequence library byte-for-byte (pure Python/NumPy, seed 2027)
-cd src/amp_challenge_2027_pkg
-pip install -e .
-generate_broad_spectrum                    # writes the library + top.fasta
-
-# 3. verify compliance with the organizers' checker
-python ../../src/eval/eval_harness_compliance.py <library.fasta> <top.fasta>
+uv sync
+uv run generate_broad_spectrum                     # library.fasta + top.fasta
+uv run generate_broad_spectrum --verify-selection   # also re-derive the selection
 ```
 
-The generator needs only `numpy` and the small `checkpoints/markov_model.json`. Reproducing the *ranking* additionally needs the surrogate stack (ESM-2, XGBoost); reproducing the *independent benchmark* needs the three judge repos and their weights, fetched by the scripts in `src/benchmark/` and `src/surrogate/`.
+CPU-only, no network, a few minutes. Output is byte-identical on every run
+(`library.fasta` sha256 `8a1535f8e509fcb6635ef9be789f842fee9356c0fa61bd495b4fb9f4d0842793`).
 
-## What is intentionally not vendored
+## Entry points
 
-Large model weights are fetched by scripts, not committed (see `.gitignore`):
+| entry point | category | top-100 ranking |
+|---|---|---|
+| `generate_broad_spectrum` | Broad spectrum | potency consensus |
+| `generate_gram_pos` | Optimal activity, Gram-positive | potency consensus |
+| `generate_gram_neg` | Optimal activity, Gram-negative | potency consensus |
+| `generate_mdr` | Optimal activity, MDR / WHO-priority | potency consensus |
+| `generate_therapeutic` | Optimal selectivity | safety window (HC50/MIC) |
 
-- **ESM-2 / ESM-1b** — `src/surrogate/fetch_weights.py` (Hugging Face; set `HF_HUB_DISABLE_XET=1`).
-- **AMPredictor, MBC-Attention, Pandi Deep_AMP** — clone the upstream repos (URLs in the paper references); wrappers in `src/benchmark/` reuse their shipped weights.
-- **DeepAMP (Li 2024) generator** — weights on the authors' Google Drive; used only by the *rejected* optimization pass in `src/optimize/`.
+All five emit the same 50,000-sequence library. The four activity categories
+share the potency-ranked top-100; `generate_therapeutic` ships a separate list
+ranked on predicted selectivity.
 
-## Method in one paragraph
+## Method in brief
 
-An order-3 residue Markov model trained on ~40,000 real AMPs (MarLys-AMP + DBAASP peptides with MIC ≤ 16 µM) generates a length- and charge-matched 50,000-peptide library. Candidates are ranked by an ESM-2 + XGBoost surrogate ensemble calibrated on a homology-aware split, keeping only the four per-strain MIC heads that reach PCC ≥ 0.5. The top-100 is selected for potency, multi-strain coverage, safety (HC50), diversity, and hard novelty/compliance gates, then validated by three activity predictors not used in selection. A generative-optimization pass that improved the list under its own acceptance gate was **rejected** after two held-out judges showed the gain did not transfer — see §3.5 of the paper.
+1. **Generate.** Order-3 residue Markov model trained on 40,047 real AMPs
+   (MarLys antibacterial set + DBAASP/QMAP peptides with panel MIC ≤ 16 µM),
+   seed 2027, 1,000,000 candidates → 998,452 after compliance filtering.
+2. **Select the library.** Length-stratified top-50,000 by mean percentile rank
+   of **amPEPpy** and **AMPredictor**. **AMPlify is held out of selection** and
+   used only as an independent judge.
+3. **Rank the top-100.** Four-judge consensus (amPEPpy, AMPredictor, AMPlify,
+   and an in-house ESM-2/XGBoost per-strain MIC ensemble) under hard gates:
+   predicted HC50 ≥ 16 µM, ≤ 0.70 identity to any already-selected candidate,
+   ≤ 0.79 identity to every reference sequence.
+
+Oracles are the three AMP models published in the
+[seqme third-party plugin registry](https://github.com/szczurek-lab/seqme-thirdparty),
+each run through seqme's own `ThirdPartyModel` wrapper.
+
+## Results vs. the v1 library
+
+Eight of eleven seqme components improved, two unchanged, one regressed
+(Diversity 0.855 → 0.816, landing at the real-potent-AMP level of 0.820).
+Held-out AMPlify rose **0.577 → 0.907** against a real-potent-AMP reference of
+0.929, so the gain is not an artifact of optimising against the selecting
+models.
+
+Full tables: [DECISION_RECORD.md](DECISION_RECORD.md),
+[METHOD_SUMMARY_10k.txt](METHOD_SUMMARY_10k.txt).
+
+## Reproducibility
+
+Oracle inference needs a GPU and three mutually incompatible legacy
+environments, so per-candidate oracle scores ship as a checkpoint
+(`checkpoint/selection.npz`, float64) exactly as trained weights would. The
+candidate pool itself regenerates from the seed on every run. The scoring code
+that produced the checkpoint is [`src/score_pool.py`](src/score_pool.py), and
+`--verify-selection` re-derives the library from the shipped scores and asserts
+it matches the emitted FASTA — so the selection step is auditable, not merely
+asserted.
+
+## Layout
+
+```
+pyproject.toml               root uv project (five entry points)
+uv.lock                      committed lockfile
+src/amp_challenge_2027/      generator + selection
+src/score_pool.py            regenerates the oracle-score checkpoint (GPU)
+checkpoint/                  markov_model.json, selection.npz, top100_scores.npz
+data/antibacterial.fasta     competition reference set
+submission/                  final FASTAs + compliance report
+DECISION_RECORD.md           why v1 was replaced
+METHOD_SUMMARY_10k.txt       full method disclosure
+KAGGLE_WRITEUP.md            writeup form content
+```
 
 ## License
 
-MIT (see `LICENSE`). All training data is open (MarLys-AMP CC-0; DBAASP via QMAP). Prepared for co-authorship eligibility: code, small checkpoints, and training-data provenance are all open.
+MIT — see [LICENSE](LICENSE). Code, weights and training-data provenance are all
+open, so nothing is withheld under the challenge's full-requirements disclosure
+rule.
