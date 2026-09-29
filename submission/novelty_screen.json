@@ -1,0 +1,32 @@
+{
+ "reference_screened": "DBAASP via QMAP benchmark, 8833 sequences, 8-50 aa canonical",
+ "competition_reference_set": {
+  "n": 39448,
+  "exact_matches_library": 0,
+  "max_identity_top100": 0.7429,
+  "max_identity_therapeutic": 0.7879,
+  "ceiling": 0.8
+ },
+ "library_50k": {
+  "exact": 0,
+  "max_identity": 0.9474,
+  "median_identity": 0.5926,
+  "n_above_0.80": 146,
+  "n_above_0.70": 3330
+ },
+ "top100": {
+  "exact": 0,
+  "max_identity": 0.6522,
+  "median_identity": 0.5201,
+  "n_above_0.80": 0,
+  "n_above_0.70": 0
+ },
+ "therapeutic_top100": {
+  "exact": 0,
+  "max_identity": 0.6316,
+  "median_identity": 0.4691,
+  "n_above_0.80": 0,
+  "n_above_0.70": 0
+ },
+ "note": "The 0.80 identity ceiling applies to the top-100 lists, which pass with margin. Library members above 0.80 identity to a DBAASP entry are disclosed here; no submitted sequence is an exact match to any screened database."
+}

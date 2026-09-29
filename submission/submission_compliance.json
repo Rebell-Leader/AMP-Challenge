@@ -26,5 +26,13 @@
     "generate_therapeutic": "PASS"
   },
   "byte_reproducible": true,
-  "library_sha256": "8a1535f8e509fcb6635ef9be789f842fee9356c0fa61bd495b4fb9f4d0842793"
+  "library_sha256": "8a1535f8e509fcb6635ef9be789f842fee9356c0fa61bd495b4fb9f4d0842793",
+  "category_lists_verified": {
+    "broad_spectrum_top.fasta": "PASS",
+    "gram_neg_top.fasta": "PASS",
+    "gram_pos_top.fasta": "PASS",
+    "mdr_top.fasta": "PASS",
+    "therapeutic_top.fasta": "PASS"
+  },
+  "novelty_screen": "see novelty_screen.json (DBAASP via QMAP, 8833 seqs): 0 exact matches; top-100 max identity 0.652"
 }
